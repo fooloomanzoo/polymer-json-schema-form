@@ -97,18 +97,19 @@
 				var values = [];
 				for (var p in s.properties) {
 					var prop = s.properties[p];
-					prop.name = p;
-					for (var d = 0; d < s.required.length; d++) {
-						var req = s.required[d];
-						if (req == p) {
-							prop.required = true;
+					if (prop != undefined) {
+						prop.name = p;
+						for (var d = 0; d < s.required.length; d++) {
+							var req = s.required[d];
+							if (req == p) {
+								prop.required = true;
+							}
 						}
+						if (this.value != undefined) {
+							prop.value = this.value[prop.name];
+						}
+						props.push(prop);
 					}
-					if (this.value != undefined) {
-						prop.value = this.value[prop.name];
-					}
-					props.push(prop);
-
 				}
 				this.set("fields", props);
 			}
