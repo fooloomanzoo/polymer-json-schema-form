@@ -34,7 +34,7 @@ Json schema form
 		</style>
 
 		<div class="container">
-			<json-schema-object-input value="[[data]]" schema="[[__schema]]"></json-schema-object-input>
+			<json-schema-object-input value="[[data]]" schema="[[schema]]"></json-schema-object-input>
 
 		</div>
 	</template>
@@ -52,28 +52,16 @@ Json schema form
 						type: String
 					},
 					data: { type: Object, notify: true, value: () => { return {}; } },
+
 					schema: {
-						type: String
-					},
-					__schema: {
 						type: Object,
 						value: function () {
 							return {};
 						}
-					},
-					//fields: { type: Array, notify: true, computed: "__computeFields(__schema)" }
-					// properties: {
-					// 	type: Array,
-					// 	notify: true,
-					// 	value: function () {
-					// 		return [];
-					// 	}
-					// }
+					}
 				};
 			}
-			static get observers() {
-				return ["__schemaChanged(schema)"]
-			};
+
 			connectedCallback() {
 				super.connectedCallback();
 				this.addEventListener("json-schema-value-changed", e => this.__handleNewSchemaValue(e));
@@ -91,33 +79,9 @@ Json schema form
 
 			refreshForm(d) {
 				this.set("data", d);
-				//this.__schema = {};
-
-				//this.__schemaChanged(this.schema);
-
-				//this.set("fields", this.__computeFields(this.__schema));
-				//this.notifyPath("fields");
 			}
 
-			// __computeFields(s) {
-			// 	var props = [];
-			// 	for (var p in s.properties) {
-			// 		var prop = s.properties[p];
-			// 		prop.name = p;
-			// 		for (var d = 0; d < s.required.length; d++) {
-			// 			var req = s.required[d];
-			// 			if (req == p) {
-			// 				prop.required = true;
-			// 			}
-			// 		}
-			// 		prop.value = this.getValue(this.data, prop.name);
-			// 		props.push(prop);
-			// 	}
-			// 	return props;
-			// }
-			__schemaChanged(s) {
-				this.__schema = JSON.parse(s);
-			}
+
 
 			setValue(object, path, value) {
 				var a = path.split('.');

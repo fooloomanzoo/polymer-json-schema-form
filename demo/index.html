@@ -53,7 +53,7 @@
           var schema = document.querySelector('#schema');
           var form = document.querySelector('#form');
           schema.addEventListener('change', function (e) {
-            form.schema = this.value;
+            form.schema = JSON.parse(this.value);
           });
           form.addEventListener('data-changed', function (e) {
             data.value = JSON.stringify(form.data, null, 2);
