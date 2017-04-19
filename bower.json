@@ -1,7 +1,7 @@
 {
-	"name": "polymer-json-schema-editor",
-	"description": "Json schema editor",
-	"main": "polymer-json-schema-editor.html",
+	"name": "polymer-json-schema-form",
+	"description": "Json schema form",
+	"main": "polymer-json-schema-form.html",
 	"dependencies": {
 		"paper-icon-button": "PolymerElements/paper-icon-button#2.0-preview",
 		"paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#2.0-preview",
