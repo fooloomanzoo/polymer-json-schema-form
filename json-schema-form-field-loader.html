@@ -1,0 +1,97 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../paper-styles/shadow.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="json-schema-string-input.html">
+<link rel="import" href="json-schema-object-input.html">
+<link rel="import" href="json-schema-array-input.html">
+<link rel="import" href="json-schema-number-input.html">
+<link rel="import" href="json-schema-datetime-input.html">
+
+<dom-module id="json-schema-form-field-loader">
+	<template>
+		<style>
+			:host {
+				display: block;
+			}
+		</style>
+
+		<div id="container">
+
+		</div>
+	</template>
+
+	<script>
+		class jsonSchemaFormFieldLoader extends Polymer.Element {
+			static get is() {
+				return 'json-schema-form-field-loader';
+			}
+
+			connectedCallback() {
+				super.connectedCallback();
+				// var c = new CustomEvent("created");
+				// this.dispatchEvent(c);
+			}
+			static get properties() {
+				return {
+					value: { type: Object },
+					schema: {
+						type: Object,
+						value: function () { return {}; }
+					},
+					path: { type: String, value: "" }
+
+				};
+			}
+			static get observers() {
+				return ["__schemaChanged(schema)"]
+			};
+
+			__schemaChanged(s) {
+
+				if (s != undefined && s.type != undefined) {
+					if (this.__el == undefined) {
+						switch (s.type) {
+							case "string":
+								if (s.format == "date-time") {
+									this.__el = document.createElement("json-schema-datetime-input");
+								} else {
+									this.__el = document.createElement("json-schema-string-input");
+								}
+								break;
+							case "integer":
+							case "number":
+								this.__el = document.createElement("json-schema-number-input");
+								break;
+							case "object":
+								this.__el = document.createElement("json-schema-object-input");
+								break;
+							case "array":
+								this.__el = document.createElement("json-schema-array-input");
+								break;
+						}
+						this.$.container.appendChild(this.__el);
+					} else {
+						this.__el.schema = s;
+					}
+					this.__el.set("schema", s);
+					this.__el.notifyPath("schema");
+					this.__el.path = this.path;
+					if (s.name != undefined && s.name != "") {
+						if (this.__el.path != "") {
+							this.__el.path += ".";
+						}
+						this.__el.path += s.name;
+					}
+					this.__el.set("value", this.value);
+				}
+			}
+
+
+
+		}
+
+		window.customElements.define(jsonSchemaFormFieldLoader.is, jsonSchemaFormFieldLoader);
+	</script>
+</dom-module>

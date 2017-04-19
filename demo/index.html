@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>polymer-json-schema-form demo</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../polymer-json-schema-form.html">
+
+  <style is="custom-style" include="demo-pages-shared-styles">
+    .third {
+      width: 32%;
+      display: inline-block;
+      vertical-align: top;
+    }
+    
+    .third textarea {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>Basic polymer-json-schema-form demo</h3>
+    <demo-snippet>
+      <template>
+        <div class="third">
+          <div> Paste your schema here</div>
+          <textarea rows="25" id="schema">
+							
+				</textarea>
+        </div>
+        <div class="third">
+          <div> Fill your form here</div>
+          <polymer-json-schema-form id="form"></polymer-json-schema-form>
+        </div>
+        <div class="third">
+          <div> See your data here</div>
+          <textarea class="third" rows="25" id="data">
+							
+				</textarea>
+        </div>
+
+
+        <script>
+          var schema = document.querySelector('#schema');
+          var form = document.querySelector('#form');
+          schema.addEventListener('change', function (e) {
+            form.schema = this.value;
+          });
+          form.addEventListener('data-changed', function (e) {
+            data.value = JSON.stringify(form.data, null, 2);
+
+          });
+        </script>
+      </template>
+    </demo-snippet>
+  </div>
+</body>
+
+</html>

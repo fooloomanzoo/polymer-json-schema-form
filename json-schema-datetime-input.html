@@ -1,0 +1,81 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-input-container.html">
+<link rel="import" href="../paper-input/paper-input-error.html">
+<dom-module id="json-schema-datetime-input">
+	<template>
+		<style>
+			:host {
+				display: block;
+			}
+		</style>
+
+
+		<paper-input-container always-float-label>
+
+			<label slot="label">[[schema.title]]</label>
+			<input slot="input" id="inpt" type="datetime-local">
+			<paper-input-error slot="error" invalid="[[invalid]]"></paper-input-error>
+		</paper-input-container>
+	</template>
+
+	<script src="../tv4/tv4.js"></script>
+	<script>
+		class jsonSchemaDatetimeInput extends Polymer.Element {
+			static get is() {
+				return 'json-schema-datetime-input';
+			}
+
+			connectedCallback() {
+				super.connectedCallback();
+				this.$.inpt.addEventListener('change', this.fireChange.bind(this));
+				var d = new Date();
+				var m = d.getMonth() + 1;
+				var day = d.getDate();
+				var v = d.getFullYear() + "-" + (m < 10 ? "0" + m : m) + "-" + (day < 10 ? "0" + day : day) + "T12:00";
+				this.$.inpt.value = v;
+			}
+
+			fireChange(e) {
+				var p = this.path;
+				if (!p.endsWith(".")) {
+					p += ".";
+				}
+				p += this.schema.name;
+				if (p.startsWith(".")) {
+					p = p.substring(1, p.length);
+				}
+				var d = new Date(this.$.inpt.value).toISOString();
+
+				var val = tv4.validate(d, this.schema);
+				this.invalid = !val;
+				this.value = d;
+				if (val) {
+					this.dispatchEvent(new CustomEvent('json-schema-value-changed',
+						{
+							detail:
+							{
+								path: p,
+								value: d
+							},
+							bubbles: true, composed: true
+						}
+					));
+				}
+
+			}
+
+			static get properties() {
+				return {
+					invalid: { type: Boolean },
+					value: { type: Date, notify: true },
+					schema: {
+						type: Object,
+						value: function () { return {}; }
+					}
+				};
+			}
+		}
+
+		window.customElements.define(jsonSchemaDatetimeInput.is, jsonSchemaDatetimeInput);
+	</script>
+</dom-module>

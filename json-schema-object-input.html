@@ -1,0 +1,120 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
+<link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../paper-styles/shadow.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="json-schema-form-field-loader.html">
+
+<dom-module id="json-schema-object-input">
+	<template>
+		<style>
+			:host {
+				display: block;
+			}
+			
+			.paper-font-body1 {
+				@apply --paper-font-body1;
+				font-size: large;
+				font-weight: 500;
+				float: right;
+			}
+			
+			.shadow-4dp {
+				@apply --shadow-elevation-4dp;
+				padding: 10px;
+				margin-bottom: 10px;
+			}
+		</style>
+
+		<div class="shadow-4dp">
+			<div class="paper-font-body1">[[schema.title]]</div>
+			<div name="space">&nbsp;</div>
+
+			<template id="propsList" is="dom-repeat" items="{{fields}}" mutable-data>
+				<json-schema-form-field-loader schema="{{item}}" value="{{item.value}}" path="[[__getPath()]]">
+				</json-schema-form-field-loader>
+			</template>
+		</div>
+	</template>
+
+	<script>
+		class jsonSchemaObjectInput extends Polymer.Element {
+			static get is() {
+				return 'json-schema-object-input';
+			}
+
+			__getPath() {
+
+				var p = "";
+				if (this.path != undefined && this.path != "") {
+					p += this.path;
+				}
+
+				return p;
+			}
+
+			static get properties() {
+				return {
+					value: {
+						type: Object
+					},
+					path: { type: String, value: "" },
+					schema: {
+						type: Object,
+						value: function () {
+							return {};
+						}
+					},
+					fields: { type: Array, notify: true, value: () => { return []; } },
+
+				};
+			}
+			static get observers() {
+				return ["__setData(value)", "__computeFields(schema)"]
+			};
+
+			__setData(v) {
+				var values = [];
+				for (var p = 0; p < this.fields.length; p++) {
+					var pr = this.fields[p];
+					var val = v[pr.name];
+					if (val != undefined) {
+						this.set("fields." + p + ".value", val);
+					}
+				}
+				this.fields = JSON.parse(JSON.stringify(this.fields));
+
+			}
+			__computeFields(s) {
+
+				var props = [];
+				var values = [];
+				for (var p in s.properties) {
+					var prop = s.properties[p];
+					prop.name = p;
+					for (var d = 0; d < s.required.length; d++) {
+						var req = s.required[d];
+						if (req == p) {
+							prop.required = true;
+						}
+					}
+					if (this.value != undefined) {
+						prop.value = this.value[prop.name];
+					}
+					props.push(prop);
+
+				}
+				this.set("fields", props);
+			}
+
+		}
+
+		window.customElements.define(jsonSchemaObjectInput.is, jsonSchemaObjectInput);
+	</script>
+</dom-module>
