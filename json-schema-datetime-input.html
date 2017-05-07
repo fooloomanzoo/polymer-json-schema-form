@@ -37,13 +37,6 @@
 
 			fireChange(e) {
 				var p = this.path;
-				if (!p.endsWith(".")) {
-					p += ".";
-				}
-				p += this.schema.name;
-				if (p.startsWith(".")) {
-					p = p.substring(1, p.length);
-				}
 				var d = new Date(this.$.inpt.value).toISOString();
 
 				var val = tv4.validate(d, this.schema);
