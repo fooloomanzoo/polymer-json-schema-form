@@ -2,63 +2,55 @@
 <link rel="import" href="../paper-input/paper-input.html">
 
 <dom-module id="json-schema-number-input">
-    <template>
-        <style>
-             :host {
-                display: block;
-            }
-        </style>
-        <paper-input value="{{value}}" type="number" on-change='fireChange' invalid=[[invalid]] label="[[schema.title]]"></paper-input>
-    </template>
+	<template>
+		<style>
+			:host {
+				display: block;
+			}
+		</style>
+		<paper-input value="{{value}}" type="number" on-change='fireChange' invalid=[[invalid]] label="[[schema.title]]"></paper-input>
+	</template>
 
-    <script src="../tv4/tv4.js"></script>
-    <script>
-        class jsonSchemaNumberInput extends Polymer.Element {
-            static get is() {
-                return 'json-schema-number-input';
-            }
+	<script src="../tv4/tv4.js"></script>
+	<script>
+		class jsonSchemaNumberInput extends Polymer.Element {
+			static get is() {
+				return 'json-schema-number-input';
+			}
 
-            fireChange(e) {
-                var p = this.path;
-                if (!p.endsWith(".")) {
-                    p += ".";
-                }
-                p += this.schema.name;
-                if (p.startsWith(".")) {
-                    p = p.substring(1, p.length);
-                }
+			fireChange(e) {
+				var p = this.path;
+				var int = Number.parseFloat(this.value);
+				var val = false;
+				if (!isNaN(int)) {
+					val = tv4.validate(int, this.schema);
+					this.dispatchEvent(new CustomEvent('json-schema-value-changed',
+						{
+							detail:
+							{
+								path: p,
+								value: int
+							},
+							bubbles: true, composed: true
+						}
+					));
 
-                var int = Number.parseFloat(this.value);
-                if (!isNaN(int)) {
-                    var val = tv4.validate(int, this.schema);
-                    this.invalid = !val;
+				}
+				this.invalid = !val;
+			}
 
-                    this.dispatchEvent(new CustomEvent('json-schema-value-changed',
-                        {
-                            detail:
-                            {
-                                path: p,
-                                value: int
-                            },
-                            bubbles: true, composed: true
-                        }
-                    ));
+			static get properties() {
+				return {
+					invalid: { type: Boolean },
+					value: { type: Number, notify: true },
+					schema: {
+						type: Object,
+						value: function () { return {}; }
+					}
+				};
+			}
+		}
 
-                }
-            }
-
-            static get properties() {
-                return {
-                    invalid: { type: Boolean },
-                    value: { type: Number, notify: true },
-                    schema: {
-                        type: Object,
-                        value: function () { return {}; }
-                    }
-                };
-            }
-        }
-
-        window.customElements.define(jsonSchemaNumberInput.is, jsonSchemaNumberInput);
-    </script>
+		window.customElements.define(jsonSchemaNumberInput.is, jsonSchemaNumberInput);
+	</script>
 </dom-module>

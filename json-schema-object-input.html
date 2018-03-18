@@ -17,14 +17,14 @@
 			:host {
 				display: block;
 			}
-			
+
 			.paper-font-body1 {
 				@apply --paper-font-body1;
 				font-size: large;
 				font-weight: 500;
 				float: right;
 			}
-			
+
 			 :host(:not([disable-elevation])) .shadow-4dp {
 				@apply --shadow-elevation-4dp;
 				padding: 10px;
@@ -95,20 +95,24 @@
 
 				var props = [];
 				var values = [];
-				for (var p in s.properties) {
-					var prop = s.properties[p];
-					if (prop != undefined) {
-						prop.name = p;
-						for (var d = 0; d < s.required.length; d++) {
-							var req = s.required[d];
-							if (req == p) {
-								prop.required = true;
+				if (s) {
+					for (var p in s.properties) {
+						var prop = s.properties[p];
+						if (prop != undefined) {
+							prop.name = p;
+							if (s.required != undefined) {
+								for (var d = 0; d < s.required.length; d++) {
+									var req = s.required[d];
+									if (req == p) {
+										prop.required = true;
+									}
+								}
 							}
+							if (this.value != undefined) {
+								prop.value = this.value[prop.name];
+							}
+							props.push(prop);
 						}
-						if (this.value != undefined) {
-							prop.value = this.value[prop.name];
-						}
-						props.push(prop);
 					}
 				}
 				this.set("fields", props);
