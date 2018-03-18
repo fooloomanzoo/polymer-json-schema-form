@@ -1,6 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="json-schema-icons.html">
 <link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../paper-listbox/paper-listbox.html">
 <link rel="import" href="../paper-item/paper-item.html">
@@ -14,7 +14,7 @@
 
 
 <dom-module id="json-schema-array-input">
-	<template>
+    <template>
 		<style>
 			:host {
 				display: block;
@@ -57,79 +57,85 @@
 		<div class="shadow-4dp">
 			<template is="dom-repeat" items="{{items}}" restamp>
 
-				<paper-fab class="rem-item-button" mini icon="remove" on-tap="__remItem"></paper-fab>
+				<paper-fab class="rem-item-button" mini icon="json-schema:remove" on-tap="__remItem"></paper-fab>
 				<div class="paper-font-body1">[[schema.name]] <span>[[index]]</span></div>
 
 				<json-schema-object-input value="[[item.value]]" schema="[[schema.items]]" path="[[path]].[[index]]"></json-schema-object-input>
 			</template>
-			<div class="bottom-space">&nbsp;
-				<paper-fab class="add" mini icon="add" on-tap="__addItem"></paper-fab>
-			</div>
+    <div class="bottom-space">&nbsp;
+        <paper-fab class="add" mini icon="json-schema:add" on-tap="__addItem"></paper-fab>
+    </div>
 
-		</div>
-	</template>
+    </div>
+    </template>
 
-	<script>
-		class jsonSchemaArrayInput extends Polymer.Element {
-			static get is() {
-				return 'json-schema-array-input';
-			}
+    <script>
+        class jsonSchemaArrayInput extends Polymer.Element {
+            static get is() {
+                return 'json-schema-array-input';
+            }
 
-			static get properties() {
-				return {
-					path: { type: String, value: "" },
-					schema: {
-						type: Object,
-						value: function () {
-							return {};
-						}
-					},
-					items: {
-						type: Array,
-						value: function () {
-							return [];
-						}
-					}
-				};
-			}
-			static get observers() {
-				return ['__schemaChanged(schema)']
-			};
-			__remItem(e) {
-				this.splice("items", e.model.index, 1);
-				this.__fireChange(e.model.index);
-			}
-			__fireChange(e) {
-				var p = this.path;
+            static get properties() {
+                return {
+                    path: {
+                        type: String,
+                        value: ""
+                    },
+                    schema: {
+                        type: Object,
+                        value: function() {
+                            return {};
+                        }
+                    },
+                    items: {
+                        type: Array,
+                        value: function() {
+                            return [];
+                        }
+                    }
+                };
+            }
+            static get observers() {
+                return ['__schemaChanged(schema)']
+            };
+            __remItem(e) {
+                this.splice("items", e.model.index, 1);
+                this.__fireChange(e.model.index);
+            }
+            __fireChange(e) {
+                var p = this.path;
 
-				this.dispatchEvent(new CustomEvent('json-schema-value-changed',
-					{
-						detail:
-						{
-							path: p,
-							index: e,
-							arrayAction: "remove"
-						},
-						bubbles: true, composed: true
-					}
-				));
-				//}
-			}
-			__addItem() {
-				this.push("items", { index: this.items.length });
-			}
-			__schemaChanged(s) {
-				if (s.value != undefined && s.value.constructor === Array) {
-					var d = [];
-					for (var x = 0; x < s.value.length; x++) {
-						d.push({ index: x, value: s.value[x] });
-						this.set("items", d);
-					}
-				}
-				//this.set("schema", s);
-			}
-		}
+                this.dispatchEvent(new CustomEvent('json-schema-value-changed', {
+                    detail: {
+                        path: p,
+                        index: e,
+                        arrayAction: "remove"
+                    },
+                    bubbles: true,
+                    composed: true
+                }));
+                //}
+            }
+            __addItem() {
+                this.push("items", {
+                    index: this.items.length
+                });
+            }
+            __schemaChanged(s) {
+                if (s.value != undefined && s.value.constructor === Array) {
+                    var d = [];
+                    for (var x = 0; x < s.value.length; x++) {
+                        d.push({
+                            index: x,
+                            value: s.value[x]
+                        });
+                        this.set("items", d);
+                    }
+                }
+                //this.set("schema", s);
+            }
+        }
 
-		window.customElements.define(jsonSchemaArrayInput.is, jsonSchemaArrayInput);
-	</script>
+        window.customElements.define(jsonSchemaArrayInput.is, jsonSchemaArrayInput);
+    </script>
 </dom-module>
