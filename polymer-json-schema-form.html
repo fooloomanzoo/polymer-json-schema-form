@@ -1,6 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-iconset-svg/iron-iconset-svg.html">
 <link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../paper-listbox/paper-listbox.html">
 <link rel="import" href="../paper-item/paper-item.html">
@@ -20,7 +20,7 @@ Json schema form
 -->
 
 <dom-module id="polymer-json-schema-form">
-	<template>
+    <template>
 		<style>
 			:host {
 				display: block;
@@ -43,99 +43,105 @@ Json schema form
 		</div>
 	</template>
 
-	<script>
-		class polymerJsonSchemaForm extends Polymer.MutableData(Polymer.Element) {
-			static get is() {
-				return 'polymer-json-schema-form';
-			}
+    <script>
+        class polymerJsonSchemaForm extends Polymer.MutableData(Polymer.Element) {
+            static get is() {
+                return 'polymer-json-schema-form';
+            }
 
 
-			static get properties() {
-				return {
-					value: {
-						type: String
-					},
-					data: { type: Object, notify: true, value: () => { return {}; } },
+            static get properties() {
+                return {
+                    value: {
+                        type: String
+                    },
+                    data: {
+                        type: Object,
+                        notify: true,
+                        value: () => {
+                            return {};
+                        }
+                    },
 
-					schema: {
-						type: Object,
-						value: function () {
-							return {};
-						}
-					}
-				};
-			}
+                    schema: {
+                        type: Object,
+                        value: function() {
+                            return {};
+                        }
+                    }
+                };
+            }
 
-			connectedCallback() {
-				super.connectedCallback();
-				this.addEventListener("json-schema-value-changed", e => this.__handleNewSchemaValue(e));
-
-
-			}
-			__handleNewSchemaValue(e) {
-				if (e.detail.arrayAction == "remove") {
-					this.splice("data." + e.detail.path, e.detail.index, 1);
-				} else {
-					this.setValue(this.data, e.detail.path, e.detail.value);
-				}
-				this.notifyPath('data');
-			}
-
-			refreshForm(d) {
-				this.set("data", d);
-			}
+            connectedCallback() {
+                super.connectedCallback();
+                this.addEventListener("json-schema-value-changed", e => this.__handleNewSchemaValue(e));
 
 
+            }
+            __handleNewSchemaValue(e) {
+                if (e.detail.arrayAction == "remove") {
+                    this.splice("data." + e.detail.path, e.detail.index, 1);
+                } else {
+                    this.setValue(this.data, e.detail.path, e.detail.value);
+                }
+                this.notifyPath('data');
+            }
 
-			setValue(object, path, value) {
-				var a = path.split('.');
-				var o = object;
-				for (var i = 0; i < a.length - 1; i++) {
-					var n = a[i];
+            refreshForm(d) {
+                this.set("data", d);
+            }
 
-					var intN = Number.parseInt(n);
-					if (n in o || (o.constructor === Array && !isNaN(intN))) {
-						if (!isNaN(intN)) {
-							if (o[n] == undefined) {
-								o[n] = {};
-							}
-						}
-						o = o[n];
-					} else {
-						var createArray = false;
-						if (i < a.length - 1) {
-							var nextN = Number.parseInt(a[i + 1]);
-							createArray = !isNaN(nextN);
-						}
 
-						o[n] = createArray ? [] : {};
-						if (createArray) {
-							o[n][nextN] = {};
-						}
-						o = o[n];
-					}
-				}
-				o[a[a.length - 1]] = value;
-			}
 
-			getValue(object, path) {
-				var o = object;
-				path = path.replace(/\[(\w+)\]/g, '.$1');
-				path = path.replace(/^\./, '');
-				var a = path.split('.');
-				while (a.length) {
-					var n = a.shift();
-					if (n in o) {
-						o = o[n];
-					} else {
-						return;
-					}
-				}
-				return o;
-			}
+            setValue(object, path, value) {
+                var a = path.split('.');
+                var o = object;
+                for (var i = 0; i < a.length - 1; i++) {
+                    var n = a[i];
 
-		}
+                    var intN = Number.parseInt(n);
+                    if (n in o || (o.constructor === Array && !isNaN(intN))) {
+                        if (!isNaN(intN)) {
+                            if (o[n] == undefined) {
+                                o[n] = {};
+                            }
+                        }
+                        o = o[n];
+                    } else {
+                        var createArray = false;
+                        if (i < a.length - 1) {
+                            var nextN = Number.parseInt(a[i + 1]);
+                            createArray = !isNaN(nextN);
+                        }
 
-		window.customElements.define(polymerJsonSchemaForm.is, polymerJsonSchemaForm);
-	</script>
+                        o[n] = createArray ? [] : {};
+                        if (createArray) {
+                            o[n][nextN] = {};
+                        }
+                        o = o[n];
+                    }
+                }
+                o[a[a.length - 1]] = value;
+            }
+
+            getValue(object, path) {
+                var o = object;
+                path = path.replace(/\[(\w+)\]/g, '.$1');
+                path = path.replace(/^\./, '');
+                var a = path.split('.');
+                while (a.length) {
+                    var n = a.shift();
+                    if (n in o) {
+                        o = o[n];
+                    } else {
+                        return;
+                    }
+                }
+                return o;
+            }
+
+        }
+
+        window.customElements.define(polymerJsonSchemaForm.is, polymerJsonSchemaForm);
+    </script>
 </dom-module>
